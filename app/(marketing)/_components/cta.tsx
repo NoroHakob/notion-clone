@@ -11,8 +11,10 @@ export const CTA = () => {
       <p className="text-gray-600 dark:text-gray-400 mb-8">
         Join thousands of creators boosting productivity with Notion Clone.
       </p>
-      <Button asChild className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black">
-        <Link href="/documents">Get Started Free <ArrowRight /> </Link>
+      <Button asChild className="bg-zinc-900 text-white dark:bg-white dark:text-black">
+        <Link href="/documents">
+          Get Started Free
+        <ArrowRight /> </Link>
       </Button>
     </section>
   );
