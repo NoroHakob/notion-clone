@@ -1,22 +1,24 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { SettingsModal } from "../modals/settings-modal"
+import { useState, useEffect } from "react";
+import { SettingsModal } from "../modals/settings-modal";
+import { AdminActionsModal } from "../modals/admin-actions-modal";
 
 export const ModalProvider = () => {
-    const [isMounted, setIsMounted] = useState(false)
+  const [isMounted, setIsMounted] = useState(false);
 
-    useEffect(() => {
-        setIsMounted(true)
-    }, [])
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-    if (!isMounted) {
-        return null
-    }
+  if (!isMounted) {
+    return null;
+  }
 
-    return (
-        <>
-            <SettingsModal />
-        </>
-    )
-}
+  return (
+    <>
+      <SettingsModal />
+      <AdminActionsModal />
+    </>
+  );
+};

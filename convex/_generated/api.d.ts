@@ -8,7 +8,13 @@
  * @module
  */
 
+import type * as _clerk from "../_clerk.js";
+import type * as _roles_getRole from "../_roles/getRole.js";
+import type * as _roles_permissions from "../_roles/permissions.js";
+import type * as admins from "../admins.js";
+import type * as debug from "../debug.js";
 import type * as documents from "../documents.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -25,7 +31,13 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  _clerk: typeof _clerk;
+  "_roles/getRole": typeof _roles_getRole;
+  "_roles/permissions": typeof _roles_permissions;
+  admins: typeof admins;
+  debug: typeof debug;
   documents: typeof documents;
+  users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
