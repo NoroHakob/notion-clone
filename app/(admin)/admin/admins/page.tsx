@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Spinner } from "@/components/spinner";
 
 type AdminUser = {
   id: string;
@@ -48,7 +49,7 @@ export default function AdminsPage() {
   };
 
   if (!isLoaded || loading) {
-    return <p>Loading admins...</p>;
+    return <Spinner size="lg"/>;
   }
 
   return (

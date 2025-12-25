@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
+import { Spinner } from "@/components/spinner";
 
 type UserRow = {
   id: string;
@@ -57,7 +58,7 @@ export default function AdminUsersPage() {
     <div className="p-10 max-w-2xl">
       <h1 className="text-2xl font-bold mb-4">Users</h1>
 
-      {loading && <p>Loading...</p>}
+      {loading && <Spinner size="lg" />}
 
       {!loading && users.length === 0 && (
         <p>No users found.</p>
