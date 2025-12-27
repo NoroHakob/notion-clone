@@ -7,6 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Spinner } from "@/components/spinner";
 import Toolbar from "@/components/toolbar";
+import { Cover } from "@/components/cover";
 
 interface DocumentIdPageProps {
   params: Promise<{
@@ -14,10 +15,6 @@ interface DocumentIdPageProps {
   }>;
 }
 
-/**
- * Safely extract Convex document ID from a slug:
- * "<id>-<title>"
- */
 function parseDocumentId(
   value: string
 ): Id<"documents"> | null {
@@ -58,7 +55,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
 
   return (
     <div className="pb-40">
-      <div className="h-[35vh]" />
+      <Cover url={document.coverImage} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar initialData={document} preview={false} />
       </div>
