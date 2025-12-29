@@ -9,7 +9,7 @@ import {
     Trash
 } from "lucide-react";
 import { useMutation } from "convex/react";
-// import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useUser } from "@clerk/clerk-react";
 
@@ -54,7 +54,7 @@ export const Item = ({
 }: ItemProps) => {
 
     const { user } = useUser()
-    // const router = useRouter()   
+    const router = useRouter()   
     const create = useMutation(api.documents.create)
     const archive = useMutation(api.documents.archive)
 
@@ -64,6 +64,7 @@ export const Item = ({
         event.stopPropagation()
         if (!id) return
         const promise = archive({ id })
+            .then(() => router.push(`/documents/`))
 
         toast.promise(promise, {
             loading: "Moving to trash...",
@@ -89,7 +90,7 @@ export const Item = ({
                 if (!expanded) {
                     onExpand?.()
                 }
-                // router.push(`/documents/${documentId}`)
+                router.push(`/documents/${documentId}`)
             })
 
             toast.promise(promise, {

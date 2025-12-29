@@ -10,7 +10,7 @@ import {
   Trash,
   Shield,
 } from "lucide-react";
-import { usePathname, useParams } from "next/navigation";
+import { usePathname, useParams, useRouter } from "next/navigation";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { toast } from "sonner";
@@ -35,6 +35,7 @@ import { TrashBox } from "./trash-box";
 import { Navbar } from "./navbar";
 
 export const Navigation = () => {
+  const router = useRouter()
   const settings = useSettings();
   const search = useSearch();
   const pathname = usePathname();
@@ -73,7 +74,9 @@ export const Navigation = () => {
 
   /* ================= ACTIONS ================= */
   const handleCreate = () => {
-    const promise = create({ title: "Untitled" });
+    const promise = create({ title: "Untitled" })
+      .then((documentId) => router.push(`/documents/${documentId}`))
+
     toast.promise(promise, {
       loading: "Creating a new note...",
       success: "New note created!",
