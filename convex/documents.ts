@@ -243,34 +243,38 @@ export const getSearch = query({
 })
 
 export const getById = query({
-    args: { documentId: v.id("documents") },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
+  args: { documentId: v.id("documents") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    const document = await ctx.db.get(args.documentId);
 
-        const document = await ctx.db.get(args.documentId);
+    if (!document) return null;
 
-        if (!document) {
-        return null;
-        }
+    if (document.isPublished && !document.isArchived) {
+      return document;
+    }
 
-        if (document.isPublished && !document.isArchived) {
-        return document;
-        }
+    if (!identity) return null;
 
-        if (!identity) {
-        return null;
-        }
+    const userId = identity.subject;
+    if (document.userId !== userId) return null;
 
-        const userId = identity.subject;
-
-        if (document.userId !== userId) {
-        return null;
-        }
-
-        return document;
-    },
+    return document;
+  },
 });
 
+export const getByIdPublic = query({
+  args: { documentId: v.id("documents") },
+  handler: async (ctx, args) => {
+    const document = await ctx.db.get(args.documentId);
+    if (!document) return null;
+
+    if (!document.isPublished) return null;
+    if (document.isArchived) return null;
+
+    return document;
+  },
+});
 
 export const update = mutation({
     args: {

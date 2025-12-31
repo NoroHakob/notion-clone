@@ -3,6 +3,7 @@
 import type { PartialBlock } from "@blocknote/core";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
+import { useTheme } from "next-themes";
 
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
@@ -21,6 +22,7 @@ const Editor = ({
   editable = true,
 }: EditorProps) => {
   const { edgestore } = useEdgeStore();
+  const { resolvedTheme } = useTheme();
 
   const editor = useCreateBlockNote({
     initialContent,
@@ -35,6 +37,8 @@ const Editor = ({
       <BlockNoteView
         editor={editor}
         editable={editable}
+        theme={resolvedTheme === "dark" ? "dark" : "light"}
+        className="notion-editor"
         onChange={() => {
           onChange(JSON.stringify(editor.document));
         }}
@@ -43,5 +47,4 @@ const Editor = ({
   );
 };
 
-
-export default Editor
+export default Editor;
