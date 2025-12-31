@@ -1,8 +1,7 @@
-import { Toaster } from "sonner"
-import { Inter } from "next/font/google";
 import type { Metadata } from "next";
+import { Inter, Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 
-import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ConvexClientProvider } from "@/components/providers/convex-provider";
 import { ModalProvider } from "@/components/providers/modal-provider";
@@ -10,7 +9,9 @@ import { EdgeStoreProvider } from "@/lib/edgestore";
 
 import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ["latin"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,12 +28,12 @@ export const metadata: Metadata = {
   description: "The connected workspace where better, faster work happens",
   icons: {
     icon: [
-    {
-      url: "/letter.png",
-      href: "/letter.png"
-    }
-  ]
-}
+      {
+        url: "/letter.png",
+        href: "/letter.png",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -42,7 +43,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body
+        className={`${inter.className} ${geistSans.variable} ${geistMono.variable}`}
+      >
         <ConvexClientProvider>
           <EdgeStoreProvider>
             <ThemeProvider
@@ -51,8 +54,8 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
               storageKey="notion-theme-2"
-              >
-              <Toaster position="bottom-center"/>
+            >
+              <Toaster position="bottom-center" />
               <ModalProvider />
               {children}
             </ThemeProvider>

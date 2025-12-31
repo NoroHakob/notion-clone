@@ -34,7 +34,7 @@ export const Heading = () => {
       </h1>
 
       <h3 className="text-base sm:text-xl md:text-2xl font-medium">
-        Work better and faster in one connected workspace — "Notion."
+        Work better and faster in one connected workspace — Notion.
       </h3>
 
       {isLoading && (
@@ -53,7 +53,6 @@ export const Heading = () => {
             </Link>
           </Button>
 
-          {/* Admin / SuperAdmin Actions */}
           {isAdmin && (
             <Button
               variant="outline"
