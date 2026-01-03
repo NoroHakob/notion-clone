@@ -9,20 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/spinner";
 import { useModal } from "@/hooks/use-modal-store";
 
-type Role = "superAdmin" | "admin-2" | "admin-3" | "user";
-
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const { user } = useUser();
   const { onOpen } = useModal();
 
-  const role: Role =
-    (user?.publicMetadata?.role as Role) ?? "user";
+  const role = user?.publicMetadata?.role as string | undefined;
 
+  const isSuperAdmin = role === "superAdmin";
   const isAdmin =
-    role === "superAdmin" ||
-    role === "admin-2" ||
-    role === "admin-3";
+    typeof role === "string" &&
+    (isSuperAdmin || role.startsWith("admin"));
 
   return (
     <div className="max-w-3xl space-y-4">
@@ -57,13 +54,14 @@ export const Heading = () => {
             <Button
               variant="outline"
               onClick={() =>
-                onOpen("adminActions", { role })
+                onOpen("adminActions", {
+                  isAdmin,
+                  isSuperAdmin,
+                })
               }
             >
-              {role === "superAdmin"
-                ? "SuperAdmin Actions"
-                : "Admin Actions"}
-                <ArrowRight className="h-4 w-4 ml-2" />
+              {isSuperAdmin ? "SuperAdmin Actions" : "Admin Actions"}
+              <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           )}
         </div>

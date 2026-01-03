@@ -1,11 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
-
-type Role = "superAdmin" | "admin-2" | "admin-3" | "user";
 
 export const AdminActionsModal = () => {
   const router = useRouter();
@@ -13,7 +16,8 @@ export const AdminActionsModal = () => {
 
   if (type !== "adminActions") return null;
 
-  const role = data?.role as Role;
+  const isAdmin = data?.isAdmin === true;
+  const isSuperAdmin = data?.isSuperAdmin === true;
 
   const goTo = (path: string) => {
     onClose();
@@ -28,15 +32,13 @@ export const AdminActionsModal = () => {
         </DialogHeader>
 
         <div className="flex flex-col gap-2 mt-4">
-          {role === "superAdmin" && (
+          {isSuperAdmin && (
             <Button onClick={() => goTo("/admin/admins")}>
               List Admins
             </Button>
           )}
 
-          {(role === "superAdmin" ||
-            role === "admin-2" ||
-            role === "admin-3") && (
+          {isAdmin && (
             <Button onClick={() => goTo("/admin/users")}>
               List Users
             </Button>

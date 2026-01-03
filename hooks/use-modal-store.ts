@@ -3,7 +3,8 @@ import { create } from "zustand";
 type ModalType = "settings" | "adminActions";
 
 interface ModalData {
-  role?: string;
+  isAdmin?: boolean;
+  isSuperAdmin?: boolean;
 }
 
 interface ModalStore {

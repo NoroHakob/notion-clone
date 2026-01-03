@@ -35,23 +35,25 @@ import { TrashBox } from "./trash-box";
 import { Navbar } from "./navbar";
 
 export const Navigation = () => {
-  const router = useRouter()
-  const settings = useSettings();
-  const search = useSearch();
+  const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
   const { onOpen } = useModal();
 
+  const settings = useSettings();
+  const search = useSearch();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const create = useMutation(api.documents.create);
 
+  const create = useMutation(api.documents.create);
   const { user, isLoaded } = useUser();
 
   /* ================= ROLE ================= */
   const role = user?.publicMetadata?.role as string | undefined;
+
+  const isSuperAdmin = role === "superAdmin";
   const isAdmin =
     typeof role === "string" &&
-    (role === "superAdmin" || role.startsWith("admin"));
+    (isSuperAdmin || role.startsWith("admin"));
 
   /* ================= REFS ================= */
   const sidebarRef = useRef<ElementRef<"aside">>(null);
@@ -74,8 +76,9 @@ export const Navigation = () => {
 
   /* ================= ACTIONS ================= */
   const handleCreate = () => {
-    const promise = create({ title: "Untitled" })
-      .then((documentId) => router.push(`/documents/${documentId}`))
+    const promise = create({ title: "Untitled" }).then((documentId) =>
+      router.push(`/documents/${documentId}`)
+    );
 
     toast.promise(promise, {
       loading: "Creating a new note...",
@@ -176,7 +179,12 @@ export const Navigation = () => {
           <Item
             label="Admin actions"
             icon={Shield}
-            onClick={() => onOpen("adminActions", { role })}
+            onClick={() =>
+              onOpen("adminActions", {
+                isAdmin,
+                isSuperAdmin,
+              })
+            }
           />
         )}
 

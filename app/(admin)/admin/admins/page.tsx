@@ -71,7 +71,6 @@ export default function AdminsPage() {
               </div>
             </div>
 
-            {/* ❗ superAdmin-ը ինքն իրեն disable անել չի կարող */}
             {admin.role !== "superAdmin" && (
               <button
                 onClick={() => handleDisable(admin.id)}
