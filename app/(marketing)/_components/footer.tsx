@@ -56,7 +56,7 @@ export const Footer = () => {
           <FaTelegramPlane />
         </a>
         <a
-          href="mailto:yourname@gmail.com"
+          href="mailto:norohakobyan469@gmail.com"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-red-500 transition"
