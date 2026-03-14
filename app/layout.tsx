@@ -24,8 +24,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Notion",
-  description: "The connected workspace where better, faster work happens",
+  title: {
+    default: "Notion Clone",
+    template: "%s | Notion Clone",
+  },
+  description:
+    "A connected workspace for your notes, documents, and ideas. Write, plan, and collaborate all in one place.",
+  keywords: [
+    "notion clone",
+    "notes app",
+    "document editor",
+    "workspace",
+    "productivity",
+    "collaboration",
+  ],
+  authors: [{ name: "Notion Clone" }],
+  creator: "Notion Clone",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+  ),
   icons: {
     icon: [
       {
@@ -33,6 +50,41 @@ export const metadata: Metadata = {
         href: "/letter.png",
       },
     ],
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+    title: "Notion Clone",
+    description:
+      "A connected workspace for your notes, documents, and ideas.",
+    siteName: "Notion Clone",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Notion Clone – Your connected workspace",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Notion Clone",
+    description:
+      "A connected workspace for your notes, documents, and ideas.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
