@@ -48,7 +48,7 @@ export const Footer = () => {
           <FaFacebookMessenger />
         </a>
         <a
-          href="https://t.me/"
+          href="https://web.telegram.org/k/"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-sky-500 transition"
