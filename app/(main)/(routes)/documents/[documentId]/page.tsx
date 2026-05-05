@@ -1,115 +1,82 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import { useQuery, useMutation } from "convex/react";
-import {
-  useParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import { useEffect } from "react";
-import Image from "next/image";
-
+import type { Metadata } from "next";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Toolbar from "@/components/toolbar";
-import { Cover } from "@/components/cover";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import { fetchQuery } from "convex/nextjs";
+import DocumentIdClient from "./document-id-client";
 
-const Editor = dynamic(() => import("@/components/editor"), {
-  ssr: false,
-});
+interface PageProps {
+  params: { documentId: string };
+}
 
-function parseDocumentId(value?: string): Id<"documents"> | null {
-  if (!value) return null;
+// ------ SEO: runs on the server, never sent to the browser ------
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   try {
-    return decodeURIComponent(value).split("-")[0] as Id<"documents">;
+    // Parse the documentId the same way your client does
+    const rawId = decodeURIComponent(params.documentId).split("-")[0];
+    const documentId = rawId as Id<"documents">;
+
+    const document = await fetchQuery(api.documents.getById, { documentId });
+
+    if (!document || document.isArchived) {
+      return {
+        title: "Document Not Found",
+        robots: { index: false, follow: false },
+      };
+    }
+
+    const title = document.title || "Untitled";
+    const description = extractPlainText(document.content, title);
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "article",
+        images: document.coverImage
+          ? [{ url: document.coverImage, width: 1200, height: 630, alt: title }]
+          : [{ url: "/og-image.png", width: 1200, height: 630, alt: title }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: document.coverImage
+          ? [document.coverImage]
+          : ["/og-image.png"],
+      },
+      // Private workspace docs should NOT be indexed by search engines
+      robots: { index: false, follow: false },
+    };
   } catch {
-    return null;
+    return { title: "Document" };
   }
 }
 
-export default function DocumentIdPage() {
-  const router = useRouter();
-  const params = useParams<{ documentId?: string }>();
-  const searchParams = useSearchParams();
+// ------ Page: just renders the client component ----------------
+export default function DocumentIdPage({ params }: PageProps) {
+  return <DocumentIdClient />;
+}
 
-  const documentId = parseDocumentId(params.documentId);
-  const isDeleted = searchParams.get("deleted") === "1";
-
-  const document = useQuery(
-    api.documents.getById,
-    documentId && !isDeleted ? { documentId } : "skip"
-  );
-
-  const update = useMutation(api.documents.update);
-
-  useEffect(() => {
-    if (!isDeleted && document === null && params.documentId) {
-      router.replace(`/documents/${params.documentId}?deleted=1`);
+// ------ Helper: strip BlockNote JSON → plain text --------------
+function extractPlainText(content?: string, fallbackTitle?: string): string {
+  if (!content) return `View "${fallbackTitle}" on Notion Clone`;
+  try {
+    const parsed = JSON.parse(content);
+    if (Array.isArray(parsed)) {
+      const text = parsed
+        .flatMap((block: { content?: { text?: string }[] }) =>
+          (block.content ?? []).map((c) => c.text ?? "")
+        )
+        .join(" ")
+        .trim();
+      return text.substring(0, 160) || `View "${fallbackTitle}" on Notion Clone`;
     }
-  }, [document, isDeleted, params.documentId, router]);
-
-  if (isDeleted) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center space-y-4">
-        <Image
-          src="/error-light.png"
-          height={300}
-          width={300}
-          alt="Deleted"
-          className="dark:hidden"
-        />
-        <Image
-          src="/error-darkMode.png"
-          height={300}
-          width={300}
-          alt="Deleted"
-          className="hidden dark:block"
-        />
-        <h2 className="text-xl font-medium">
-          This page was deleted
-        </h2>
-        <Button onClick={() => router.replace("/documents")}>
-          Go back
-        </Button>
-      </div>
-    );
+  } catch {
+    return content.substring(0, 160);
   }
-
-  if (document === undefined) {
-    return (
-      <div className="flex justify-center pt-20">
-        <Cover.Skeleton />
-        <div className="md:max-w-3xl lg:max-w-4xl mx-auto mt-10 space-y-4">
-          <Skeleton className="h-14 w-[50%]" />
-          <Skeleton className="h-4 w-[80%]" />
-          <Skeleton className="h-14 w-[40%]" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!document) {
-    return null;
-  }
-
-  return (
-    <div className="pb-40">
-      <Cover url={document.coverImage} />
-      <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
-        <Toolbar initialData={document} preview={false} />
-        <Editor
-          onChange={(content) =>
-            update({ id: documentId!, content })
-          }
-          initialContent={
-            document.content ? JSON.parse(document.content) : undefined
-          }
-          editable
-        />
-      </div>
-    </div>
-  );
+  return `View "${fallbackTitle}" on Notion Clone`;
 }
