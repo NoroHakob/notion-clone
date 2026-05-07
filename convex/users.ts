@@ -7,9 +7,6 @@ import { canManageUsers, canDeleteTarget } from "./_roles/permissions";
 export const listUsers = action({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
-    console.log("=== IDENTITY FULL ===", JSON.stringify(identity, null, 2));
-    console.log("=== publicMetadata ===", identity?.publicMetadata);
-    console.log("=== public_metadata ===", (identity as any)?.public_metadata);
     if (!identity) throw new Error("Unauthenticated");
 
     const role = getRole(identity);
@@ -21,7 +18,7 @@ export const listUsers = action({
       .filter((u) => {
         const r = u.publicMetadata?.role as Role | undefined;
         const status = u.publicMetadata?.status;
-        return (!r || r === "user") && status !== "disabled"; // ✅ fixed
+        return (!r || r === "user") && status !== "disabled";
       })
       .map((u) => ({
         id: u.id,
@@ -43,13 +40,12 @@ export const listAdmins = action({
 
     return users.data
       .filter((u) => {
-        const r = u.publicMetadata?.role as Role;
+        const r = u.publicMetadata?.role as Role | undefined;
         const status = u.publicMetadata?.status;
 
-        return (
-          status !== "disabled" &&
-          (isSuperAdmin(r) || isAdmin(r))
-        );
+        if (!r) return false;
+        if (status === "disabled") return false;
+        return isSuperAdmin(r) || isAdmin(r);
       })
       .map((u) => ({
         id: u.id,
@@ -71,8 +67,7 @@ export const disableUser = action({
     if (!canManageUsers(callerRole)) throw new Error("Forbidden");
 
     const targetUser = await clerk.users.getUser(userId);
-    const targetRole =
-      (targetUser.publicMetadata?.role as Role) ?? "user";
+    const targetRole = (targetUser.publicMetadata?.role as Role | undefined);
 
     if (!canDeleteTarget(callerRole, targetRole)) {
       throw new Error("Forbidden");
