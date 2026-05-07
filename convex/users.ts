@@ -7,6 +7,9 @@ import { canManageUsers, canDeleteTarget } from "./_roles/permissions";
 export const listUsers = action({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
+    console.log("=== IDENTITY FULL ===", JSON.stringify(identity, null, 2));
+    console.log("=== publicMetadata ===", identity?.publicMetadata);
+    console.log("=== public_metadata ===", (identity as any)?.public_metadata);
     if (!identity) throw new Error("Unauthenticated");
 
     const role = getRole(identity);
