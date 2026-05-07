@@ -1,5 +1,3 @@
-// convex/admins.ts
-
 import { query } from "./_generated/server";
 import { getRole, isSuperAdmin } from "./_roles/getRole";
 

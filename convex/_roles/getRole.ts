@@ -2,8 +2,8 @@ export type Role = string;
 
 export function getRole(identity: any): Role {
   return (
-    identity?.public_metadata?.role ??
-    identity?.token?.public_metadata?.role ??
+    identity?.publicMetadata?.role ??   // ✅ camelCase — correct Convex path
+    identity?.public_metadata?.role ??  // snake_case fallback
     "user"
   );
 }

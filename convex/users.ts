@@ -1,15 +1,9 @@
-// convex/users.ts
-
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { clerk } from "./_clerk";
 import { getRole, Role, isAdmin, isSuperAdmin } from "./_roles/getRole";
 import { canManageUsers, canDeleteTarget } from "./_roles/permissions";
 
-/**
- * ACTION — List users (admin-* + superAdmin)
- * ❗ միայն active user-ներ
- */
 export const listUsers = action({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -22,9 +16,9 @@ export const listUsers = action({
 
     return users.data
       .filter((u) => {
-        const r = u.publicMetadata?.role as Role;
+        const r = u.publicMetadata?.role as Role | undefined;
         const status = u.publicMetadata?.status;
-        return r === "user" && status !== "disabled";
+        return (!r || r === "user") && status !== "disabled"; // ✅ fixed
       })
       .map((u) => ({
         id: u.id,
@@ -34,9 +28,6 @@ export const listUsers = action({
   },
 });
 
-/**
- * ACTION — List admins (superAdmin only)
- */
 export const listAdmins = action({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -65,9 +56,6 @@ export const listAdmins = action({
   },
 });
 
-/**
- * ACTION — Disable user/admin (soft delete)
- */
 export const disableUser = action({
   args: {
     userId: v.string(),
